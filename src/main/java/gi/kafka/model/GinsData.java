@@ -20,7 +20,7 @@ public class GinsData {
 		this.load();
 	}
 	
-	public GinsData(byte[] data) {
+	public GinsData(final byte[] data) {
 		this.data = data;
 		this.load();
 	}

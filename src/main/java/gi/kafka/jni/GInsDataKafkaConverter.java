@@ -87,7 +87,7 @@ public class GInsDataKafkaConverter {
 	 * Creates a link to native GIKafkaConverter c++ library
 	 * @param data input byte[] data array
 	 */
-	public GInsDataKafkaConverter(byte[] data) {
+	public GInsDataKafkaConverter(final byte[] data) {
 		setupLinker();
 		final boolean worked = this.load(data, data.length);
 		if (!worked)
