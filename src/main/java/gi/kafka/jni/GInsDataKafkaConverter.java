@@ -33,6 +33,14 @@ public class GInsDataKafkaConverter {
 		if (linked)
 			return;
 		
+		try {
+			System.loadLibrary(DATA_LIB);
+			System.loadLibrary(CONVERTER_LIB);
+		} catch (UnsatisfiedLinkError e) {
+			// libraries are not in classpath or library path
+			// unpack and load them out of jar file
+		}
+		
 		// debugging output
 		//String arch = System.getProperty("sun.arch.data.model");
 		//String libPath = System.getProperty("java.library.path");
@@ -65,12 +73,13 @@ public class GInsDataKafkaConverter {
 		final File fileOut = new File(outDirectory);
 		
 		try {
-			if (!fileOut.exists()) {
+			if (!fileOut.exists() || fileOut.length() <= 0) {
 				final InputStream in = GInsDataKafkaConverter.class.getResourceAsStream("/"+resourceName);
 				
 				// write to temp directory
 				final OutputStream out = FileUtils.openOutputStream(fileOut);
 				System.out.println("[GinsDataKafkaConverter]: writing "+resourceName+" to: " + fileOut.getAbsolutePath());
+				System.out.println("In: "+in+", Out: "+out);
 				
 				// copy files
 				IOUtils.copy(in, out);
