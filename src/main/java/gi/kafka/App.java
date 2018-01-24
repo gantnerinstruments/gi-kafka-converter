@@ -5,22 +5,28 @@ import java.util.Arrays;
 
 import gi.kafka.model.GinsData;
 import gi.kafka.model.messages.MetaHeader;
+import gi.kafka.model.messages.VariableHeader;
 
-/**
- * Hello world!
- *
- */
+
 public class App {
 	
 	public static void main(String[] args) {
 		try {
-			GinsData data = new GinsData("./res/test1.dat");
-			
-			MetaHeader header = data.getMeta().getPacketHeader();
-			System.out.println("header: "+header);
-			
-			final float[] vars = header.getVariables().get(0).getFloatData();
-			System.out.println("vars: "+Arrays.toString(vars));
+			if (args.length > 0) {
+				final GinsData data = new GinsData(args[0]);
+				
+				final MetaHeader header = data.getMeta().getPacketHeader();
+				System.out.println("Header: "+header);
+				
+				int idx = 0;
+				for (VariableHeader var : header.getVariables()) {
+					System.out.println("Variables["+var.getName()+", "+(idx++)+"]");
+					System.out.println(Arrays.toString(var.getLongData()));
+				}
+				
+			} else {
+				System.out.println("No input file specified!");
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();

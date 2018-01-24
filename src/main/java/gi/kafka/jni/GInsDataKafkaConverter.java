@@ -11,15 +11,18 @@ import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+import gi.kafka.util.OSDetector;
+
 public class GInsDataKafkaConverter {
 	
 	
 	private static String getAppendix() {
-		String arch = System.getProperty("sun.arch.data.model");
+		final String arch = System.getProperty("sun.arch.data.model");
+		
 		if (arch.equalsIgnoreCase("64"))
-			return "_64";
+			return "_x64";
 		else
-			return "_32";
+			return "_x86";
 	}
 	private static final String DATA_LIB = "giutility"+getAppendix();
 	private static final String CONVERTER_LIB = "GInsData_Kafka_Converter"+getAppendix();
@@ -53,33 +56,35 @@ public class GInsDataKafkaConverter {
 		linked = true;
 	}
 
-	/**
-	 * Puts library to temp dir and loads to memory
-	 */
 	private void loadLib(String path, String name, boolean link) {
-		final String ending = ".dll";
+		final String ending = OSDetector.isWindows() ? ".dll" : ".so";
 		
 		final String resourceName = name + ending;
-		final String writeName = name.replace("_32", "").replace("_64", "") + ending;
+		final String writeName = name.replace("_x86", "").replace("_x64", "") + ending;
+		final String outDirectory = System.getProperty("java.io.tmpdir") + "/" + path + writeName;
+		final File fileOut = new File(outDirectory);
+		
 		try {
-			// have to use a stream
-			final InputStream in = GInsDataKafkaConverter.class.getResourceAsStream("/"+resourceName);
+			if (!fileOut.exists()) {
+				final InputStream in = GInsDataKafkaConverter.class.getResourceAsStream("/"+resourceName);
+				
+				// write to temp directory
+				final OutputStream out = FileUtils.openOutputStream(fileOut);
+				System.out.println("[GinsDataKafkaConverter]: writing "+resourceName+" to: " + fileOut.getAbsolutePath());
+				
+				// copy files
+				IOUtils.copy(in, out);
+				in.close();
+				out.close();
+			}
 			
-			// always write to different location
-			File fileOut = new File(System.getProperty("java.io.tmpdir") + "/" + path + writeName);
-			OutputStream out = FileUtils.openOutputStream(fileOut);
-
-			System.out.println("Writing "+resourceName+" to: " + fileOut.getAbsolutePath());
-			
-			IOUtils.copy(in, out);
-			in.close();
-			out.close();
+			// library required for explicit linking?
 			if (link)
 				System.load(fileOut.toString());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Failed to load required DLL", e);
+			throw new RuntimeException("[GinsDataKafkaConverter]: failed to load required libraries", e);
 		}
 	}
 	

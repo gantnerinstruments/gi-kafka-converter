@@ -12,7 +12,6 @@ import gi.kafka.model.GinsData;
 
 public class VariableHeader {
 
-	
 	private static final int TYPE_No = 0;
 	private static final int TYPE_Boolean = 1;
 	private static final int TYPE_SignedInt8 = 2;
@@ -62,9 +61,30 @@ public class VariableHeader {
 		this.data = data;
 		this.variableIndex = variableIndex;
 	}
+
+	
+	public byte[] getByteData() {
+		return this.data.getConverter().getVariableDataByte(this.variableIndex);
+	}
+
+	public short[] getShortData() {
+		return this.data.getConverter().getVariableDataShort(this.variableIndex);
+	}
 	
 	public float[] getFloatData() {
 		return this.data.getConverter().getVariableDataFloat(this.variableIndex);
+	}
+	
+	public int[] getIntData() {
+		return this.data.getConverter().getVariableDataInt(this.variableIndex);
+	}
+	
+	public double[] getDoubleData() {
+		return this.data.getConverter().getVariableDataDouble(this.variableIndex);
+	}
+
+	public long[] getLongData() {
+		return this.data.getConverter().getVariableDataLong(this.variableIndex);
 	}
 	
 	// TODO: generic way of returning data
@@ -85,6 +105,7 @@ public class VariableHeader {
 		
 		return null;
 	}
+	
 
 	@JsonProperty("DataDirection")
 	public int dataDirection;

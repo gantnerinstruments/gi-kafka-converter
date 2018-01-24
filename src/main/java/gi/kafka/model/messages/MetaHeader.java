@@ -91,6 +91,10 @@ public class MetaHeader {
 	public List<VariableHeader> getVariables() {
 		return variables;
 	}
+	
+	public VariableHeader getVariable(int index) {
+		return variables.get(index);
+	}
 
 	@Override
 	public int hashCode() {
