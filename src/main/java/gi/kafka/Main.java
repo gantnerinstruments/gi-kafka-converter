@@ -3,17 +3,18 @@ package gi.kafka;
 import java.io.IOException;
 import java.util.Arrays;
 
-import gi.kafka.model.GinsData;
+import gi.kafka.model.GInsData;
+import gi.kafka.model.InvalidDataStreamException;
 import gi.kafka.model.messages.MetaHeader;
 import gi.kafka.model.messages.VariableHeader;
 
 
-public class App {
+public class Main {
 	
 	public static void main(String[] args) {
 		try {
 			if (args.length > 0) {
-				final GinsData data = new GinsData(args[0]);
+				final GInsData data = new GInsData(args[0]);
 				
 				final MetaHeader header = data.getMeta().getPacketHeader();
 				System.out.println("Header: "+header);
@@ -21,7 +22,12 @@ public class App {
 				int idx = 0;
 				for (VariableHeader var : header.getVariables()) {
 					System.out.println("Variables["+var.getName()+", "+(idx++)+"]");
-					System.out.println(Arrays.toString(var.getLongData()));
+					try {
+						System.out.println(Arrays.toString(var.getLongData()));
+					} catch (InvalidDataStreamException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 			} else {

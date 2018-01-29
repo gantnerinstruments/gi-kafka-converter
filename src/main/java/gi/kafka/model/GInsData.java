@@ -6,28 +6,30 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.List;
 
 import gi.kafka.jni.GInsDataKafkaConverter;
+import gi.kafka.model.messages.VariableHeader;
 
-public class GinsData {
+public class GInsData {
 
 	private byte[] data;
 	private GInsDataKafkaConverter converter;
-	private GinsDataMetaModel metaModel;
+	private GInsDataMetaModel metaModel;
 	
-	public GinsData(String directory) throws IOException {
+	public GInsData(String directory) throws IOException {
 		this.data = getBytes(directory);
 		this.load();
 	}
 	
-	public GinsData(final byte[] data) {
+	public GInsData(final byte[] data) throws IOException {
 		this.data = data;
 		this.load();
 	}
 	
-	private void load() {
+	private void load() throws IOException {
 		this.converter = new GInsDataKafkaConverter(data);
-		this.metaModel = new GinsDataMetaModel(this);
+		this.metaModel = new GInsDataMetaModel(this);
 		this.converter.free();
 	}
 	
@@ -35,8 +37,16 @@ public class GinsData {
 		return this.converter;
 	}
 	
-	public GinsDataMetaModel getMeta() {
+	public GInsDataMetaModel getMeta() {
 		return this.metaModel;
+	}
+	
+	public List<VariableHeader> getVariables() {
+		return this.metaModel.getVariables();
+	}
+	
+	public VariableHeader getVariable(int index) {
+		return this.metaModel.getVariable(index);
 	}
 	
 	private MappedByteBuffer getByteBuffer(String dir) throws IOException {

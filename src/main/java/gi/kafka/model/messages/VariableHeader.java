@@ -8,7 +8,8 @@ import org.msgpack.core.MessageUnpacker;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import gi.kafka.jni.GInsDataKafkaConverter;
-import gi.kafka.model.GinsData;
+import gi.kafka.model.GInsData;
+import gi.kafka.model.InvalidDataStreamException;
 
 public class VariableHeader {
 
@@ -29,8 +30,27 @@ public class VariableHeader {
 	private static final int TYPE_UnSignedInt64 = 14;
 	private static final int TYPE_BitSet64 = 15;
 	
+	private static final String[] types = {
+		"none",
+		"boolean",
+		"signed int 8",
+		"unsigned int 8",
+		"signed int 16",
+		"unsigned int 16",
+		"signed int 32",
+		"unsinged int 32",
+		"float",
+		"bitset 8",
+		"bitset 16",
+		"bitset 32",
+		"double",
+		"signed int 64",
+		"unsigned int 64",
+		"bitset 64"
+	};
 	
-	public static VariableHeader[] unpack(GinsData data, MessageUnpacker unpacker) throws IOException {
+	
+	public static VariableHeader[] unpack(GInsData data, MessageUnpacker unpacker) throws IOException {
 		final int headers = unpacker.unpackArrayHeader();
 		final VariableHeader[] vh = new VariableHeader[headers];
 		
@@ -55,35 +75,52 @@ public class VariableHeader {
 	}
 	
 	private final int variableIndex;
-	private final GinsData data;
-	public VariableHeader(GinsData data, int variableIndex) {
+	private final GInsData data;
+	public VariableHeader(GInsData data, int variableIndex) {
 		super();
 		this.data = data;
 		this.variableIndex = variableIndex;
 	}
 
+
+	
+	public boolean[] getBooleanData() throws InvalidDataStreamException {
+		if (this.getDataType() != TYPE_Boolean)
+			throw new InvalidDataStreamException("Trying to read boolean data from "+types[this.getDataType()]+".");
+		return this.data.getConverter().getVariableDataBoolean(this.variableIndex);
+	}
 	
 	public byte[] getByteData() {
 		return this.data.getConverter().getVariableDataByte(this.variableIndex);
 	}
 
-	public short[] getShortData() {
+	public short[] getShortData() throws InvalidDataStreamException {
+		if (this.getDataType() != TYPE_UnSignedInt16 && this.getDataType() != TYPE_SignedInt16 && this.getDataType() != TYPE_BitSet16)
+			throw new InvalidDataStreamException("Trying to read short data from "+types[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataShort(this.variableIndex);
 	}
 	
-	public float[] getFloatData() {
+	public float[] getFloatData() throws InvalidDataStreamException {
+		if (this.getDataType() != TYPE_Float)
+			throw new InvalidDataStreamException("Trying to read float data from "+types[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataFloat(this.variableIndex);
 	}
 	
-	public int[] getIntData() {
+	public int[] getIntData() throws InvalidDataStreamException {
+		if (this.getDataType() != TYPE_UnSignedInt32 && this.getDataType() != TYPE_SignedInt32 && this.getDataType() != TYPE_BitSet32)
+			throw new InvalidDataStreamException("Trying to read int data from "+types[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataInt(this.variableIndex);
 	}
 	
-	public double[] getDoubleData() {
+	public double[] getDoubleData() throws InvalidDataStreamException {
+		if (this.getDataType() != TYPE_Double)
+			throw new InvalidDataStreamException("Trying to read double data from "+types[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataDouble(this.variableIndex);
 	}
-
-	public long[] getLongData() {
+	
+	public long[] getLongData() throws InvalidDataStreamException {
+		if (this.getDataType() != TYPE_UnSignedInt64 && this.getDataType() != TYPE_SignedInt64 && this.getDataType() != TYPE_BitSet64)
+			throw new InvalidDataStreamException("Trying to read boolean data from "+types[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataLong(this.variableIndex);
 	}
 	

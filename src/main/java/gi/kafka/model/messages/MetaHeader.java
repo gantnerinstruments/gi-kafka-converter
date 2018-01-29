@@ -9,11 +9,11 @@ import org.msgpack.core.MessageUnpacker;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import gi.kafka.model.GinsData;
+import gi.kafka.model.GInsData;
 
 public class MetaHeader {
 
-	public static MetaHeader[] unpack(GinsData data, MessageUnpacker unpacker) throws IOException {
+	public static MetaHeader[] unpack(GInsData data, MessageUnpacker unpacker) throws IOException {
 		final int elements = unpacker.unpackArrayHeader();
 		final MetaHeader[] ph = new MetaHeader[elements];
 		
@@ -35,8 +35,8 @@ public class MetaHeader {
 		return ph;
 	}
 	
-	private final GinsData data;
-	public MetaHeader(GinsData data) {
+	private final GInsData data;
+	public MetaHeader(GInsData data) {
 		super();
 		this.data = data;
 	}
