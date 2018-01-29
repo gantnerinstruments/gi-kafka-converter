@@ -37,13 +37,15 @@ public class GInsDataKafkaConverter {
 		//System.out.println("java.library.path=" + libPath+", sun.arch.data.model="+arch);
 		//System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		
-		/*try {
-			System.loadLibrary(DATA_LIB);
-		} catch (UnsatisfiedLinkError e) {
-			loadLib("", DATA_LIB, true);
-			// libraries are not in classpath or library path
-			// unpack and load them out of jar file
-		}*/
+		if (OSDetector.isWindows()) {
+			try {
+				System.loadLibrary(DATA_LIB);
+			} catch (UnsatisfiedLinkError e) {
+				loadLib("", DATA_LIB, true);
+				// libraries are not in classpath or library path
+				// unpack and load them out of jar file
+			}
+		}
 
 		try {
 			System.loadLibrary(CONVERTER_LIB);
