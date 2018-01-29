@@ -57,7 +57,7 @@ public class GInsDataKafkaConverter {
 	private void loadFromJar() {
 		// we need to put both DLLs to temp dir
 		// String path = "GIns_" + new Date().getTime();
-		loadLib("", DATA_LIB, true);
+		//loadLib("", DATA_LIB, true);
 		loadLib("", CONVERTER_LIB, true);
 		linked = true;
 	}
@@ -93,6 +93,8 @@ public class GInsDataKafkaConverter {
 			e.printStackTrace();
 			throw new RuntimeException("[GinsDataKafkaConverter]: failed to load required libraries", e);
 		}
+		
+		System.out.println("Loaded "+name+"");
 	}
 	
 	/**
