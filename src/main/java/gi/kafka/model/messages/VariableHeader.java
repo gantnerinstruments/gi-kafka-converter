@@ -130,23 +130,55 @@ public class VariableHeader {
 		return this.data.getConverter().getVariableDataLong(this.variableIndex);
 	}
 	
-	// TODO: generic way of returning data
+	/**
+	 * Use generic way to obtain data array. Automatically returns boolean, byte,
+	 * short, integer, long, double or float array. Whichever is needed according to
+	 * the variable's dataType.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public <T> T getGenericData() {
 		final GInsDataKafkaConverter conv = this.data.getConverter();
 		switch (variableType) {
 		
-			// floats: 4 bytes
-			case 8:
+			case TYPE_Boolean:
+				return (T)(boolean[])conv.getVariableDataBoolean(this.variableIndex);
+				
+			case TYPE_Float:
 				return (T)(float[])conv.getVariableDataFloat(this.variableIndex);
 				
-			// bytes
-			case 2:
-			case 3:
-			case 9:
-				return (T)(byte[])conv.getVariableDataByte(this.variableIndex);
-		}
+			case TYPE_Double:
+				return (T)(double[])conv.getVariableDataDouble(this.variableIndex);
 		
-		return null;
+			// 1 byte
+			case TYPE_UnSignedInt8:
+			case TYPE_SignedInt8:
+			case TYPE_BitSet8:
+				return (T)(byte[])conv.getVariableDataByte(this.variableIndex);
+				
+			// 2 bytes
+			case TYPE_UnSignedInt16:
+			case TYPE_SignedInt16:
+			case TYPE_BitSet16:
+				return (T) (short[]) conv.getVariableDataShort(this.variableIndex);
+				
+			// 4 bytes
+			case TYPE_UnSignedInt32:
+			case TYPE_SignedInt32:
+			case TYPE_BitSet32:
+				return (T) (int[]) conv.getVariableDataInt(this.variableIndex);
+				
+			// 8 bytes
+			case TYPE_UnSignedInt64:
+			case TYPE_SignedInt64:
+			case TYPE_BitSet64:
+				return (T) (long[]) conv.getVariableDataLong(this.variableIndex);
+				
+			// type not found or unknown, return raw
+			default:
+				return (T)(byte[])conv.getVariableDataRaw(this.variableIndex);
+		}
 	}
 	
 

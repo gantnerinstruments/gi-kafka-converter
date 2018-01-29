@@ -96,27 +96,43 @@ public class GInsDataTest extends TestCase {
 		try {
 			var.getBooleanData();
 			fail("Expected "+InvalidDataStreamException.class+".");
-		} catch (Exception e) { }
+		} catch (InvalidDataStreamException e) { }
 
 		try {
 			var.getShortData();
 			fail("Expected "+InvalidDataStreamException.class+".");
-		} catch (Exception e) { }
+		} catch (InvalidDataStreamException e) { }
 
 		try {
 			var.getIntData();
 			fail("Expected "+InvalidDataStreamException.class+".");
-		} catch (Exception e) { }
+		} catch (InvalidDataStreamException e) { }
 
 		try {
 			var.getFloatData();
 			fail("Expected "+InvalidDataStreamException.class+".");
-		} catch (Exception e) { }
+		} catch (InvalidDataStreamException e) { }
 
 		try {
 			var.getDoubleData();
 			fail("Expected "+InvalidDataStreamException.class+".");
-		} catch (Exception e) { }
+		} catch (InvalidDataStreamException e) { }
+	}
+	
+	public void testGenericDataRetriever() {
+		final VariableHeader var = data.getVariable(0);
+		
+		// long variables work
+		final long[] ldata = var.getGenericData();
+		
+		// raw data works
+		final byte[] rdata = var.getRawData();
+
+		// int variables should throw an exception
+		try {
+			final int[] idata = var.getGenericData();
+			fail("Expected "+ClassCastException.class+".");
+		} catch (ClassCastException e) { }
 	}
 	
 	// TODO
