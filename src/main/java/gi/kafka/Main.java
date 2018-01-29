@@ -20,6 +20,7 @@ public class Main {
 				System.out.println("Header: "+header);
 				
 				int idx = 0;
+				//System.out.println("Vars: "+header.getVariables().size());
 				for (VariableHeader var : header.getVariables()) {
 					System.out.println("Variables["+var.getName()+", "+(idx++)+"]");
 					try {

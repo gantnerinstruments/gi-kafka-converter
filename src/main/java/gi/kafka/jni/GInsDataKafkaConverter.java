@@ -93,6 +93,8 @@ public class GInsDataKafkaConverter {
 			e.printStackTrace();
 			throw new RuntimeException("[GinsDataKafkaConverter]: failed to load required libraries", e);
 		}
+		
+		System.out.println("Loaded "+name+"");
 	}
 	
 	/**
