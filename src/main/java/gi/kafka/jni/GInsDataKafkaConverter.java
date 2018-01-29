@@ -71,7 +71,7 @@ public class GInsDataKafkaConverter {
 		final File fileOut = new File(outDirectory);
 		
 		try {
-			if (!fileOut.exists() || fileOut.length() <= 0) {
+			if (!fileOut.exists() || fileOut.length() <= 0 || true) {
 				final InputStream in = GInsDataKafkaConverter.class.getResourceAsStream("/"+resourceName);
 				
 				// write to temp directory
