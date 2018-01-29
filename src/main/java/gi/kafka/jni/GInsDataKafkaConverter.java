@@ -30,35 +30,29 @@ public class GInsDataKafkaConverter {
 	private void setupLinker() {
 		if (linked)
 			return;
-		
-		try {
-			System.loadLibrary(DATA_LIB);
-			System.loadLibrary(CONVERTER_LIB);
-		} catch (UnsatisfiedLinkError e) {
-			// libraries are not in classpath or library path
-			// unpack and load them out of jar file
-		}
-		
+
 		// debugging output
 		//String arch = System.getProperty("sun.arch.data.model");
 		//String libPath = System.getProperty("java.library.path");
 		//System.out.println("java.library.path=" + libPath+", sun.arch.data.model="+arch);
 		//System.out.println("Working Directory = " + System.getProperty("user.dir"));
+		
+		/*try {
+			System.loadLibrary(DATA_LIB);
+		} catch (UnsatisfiedLinkError e) {
+			loadLib("", DATA_LIB, true);
+			// libraries are not in classpath or library path
+			// unpack and load them out of jar file
+		}*/
 
-		// unpack libraries, store them in temp folder and load
-		loadFromJar();
+		try {
+			System.loadLibrary(CONVERTER_LIB);
+		} catch (UnsatisfiedLinkError e) {
+			loadLib("", CONVERTER_LIB, true);
+			// libraries are not in classpath or library path
+			// unpack and load them out of jar file
+		}
 
-	}
-
-	/**
-	 * Load native libraries out of jar bundle.
-	 * Stores them in temp folder.
-	 */
-	private void loadFromJar() {
-		// we need to put both DLLs to temp dir
-		// String path = "GIns_" + new Date().getTime();
-		//loadLib("", DATA_LIB, true);
-		loadLib("", CONVERTER_LIB, true);
 		linked = true;
 	}
 
