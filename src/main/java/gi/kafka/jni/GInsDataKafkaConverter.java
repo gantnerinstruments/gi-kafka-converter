@@ -57,7 +57,7 @@ public class GInsDataKafkaConverter {
 	private void loadFromJar() {
 		// we need to put both DLLs to temp dir
 		// String path = "GIns_" + new Date().getTime();
-		loadLib("", DATA_LIB, true);
+		//loadLib("", DATA_LIB, true);
 		loadLib("", CONVERTER_LIB, true);
 		linked = true;
 	}
@@ -71,7 +71,7 @@ public class GInsDataKafkaConverter {
 		final File fileOut = new File(outDirectory);
 		
 		try {
-			if (!fileOut.exists() || fileOut.length() <= 0 || true) {
+			if (!fileOut.exists() || fileOut.length() <= 0) {
 				final InputStream in = GInsDataKafkaConverter.class.getResourceAsStream("/"+resourceName);
 				
 				// write to temp directory
