@@ -90,7 +90,13 @@ public class VariableHeader {
 		return this.data.getConverter().getVariableDataBoolean(this.variableIndex);
 	}
 	
-	public byte[] getByteData() {
+	public byte[] getRawData() {
+		return this.data.getConverter().getVariableDataRaw(this.variableIndex);
+	}
+	
+	public byte[] getByteData() throws InvalidDataStreamException {
+		if (this.getDataType() != TYPE_UnSignedInt8 && this.getDataType() != TYPE_SignedInt8 && this.getDataType() != TYPE_BitSet8)
+			throw new InvalidDataStreamException("Trying to read byte data from "+types[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataByte(this.variableIndex);
 	}
 

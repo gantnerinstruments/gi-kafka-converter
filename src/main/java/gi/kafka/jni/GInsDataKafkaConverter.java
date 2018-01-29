@@ -15,17 +15,15 @@ import gi.kafka.util.OSDetector;
 
 public class GInsDataKafkaConverter {
 	
-	
-	private static String getAppendix() {
-		final String arch = System.getProperty("sun.arch.data.model");
-		
-		if (arch.equalsIgnoreCase("64"))
-			return "_x64";
-		else
-			return "_x86";
+	private static String getDataLibName() {
+		return OSDetector.isWindows() ? "giutility" : "libGInsData";
 	}
-	private static final String DATA_LIB = "giutility"+getAppendix();
-	private static final String CONVERTER_LIB = "GInsData_Kafka_Converter"+getAppendix();
+	private static String getConverterLibName() {
+		return OSDetector.isWindows() ? "GInsData_Kafka_Converter" : "libGInsData_Kafka_Converter";
+	}
+	
+	private static final String DATA_LIB = getDataLibName();
+	private static final String CONVERTER_LIB = getConverterLibName();
 
 	
 	private boolean linked = false;
@@ -111,7 +109,8 @@ public class GInsDataKafkaConverter {
 	public native boolean load(byte[] data, int length);
 	public native byte[] getMeta();
 	public native void free();
-	
+
+	public native byte[] getVariableDataRaw(int varIdx);
 	public native double[] getVariableDataDouble(int varIdx);
 	public native boolean[] getVariableDataBoolean(int varIdx);
 	public native byte[] getVariableDataByte(int varIdx);
