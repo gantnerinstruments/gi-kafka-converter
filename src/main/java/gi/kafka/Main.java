@@ -23,12 +23,7 @@ public class Main {
 				//System.out.println("Vars: "+header.getVariables().size());
 				for (VariableHeader var : header.getVariables()) {
 					System.out.println("Variables["+var.getName()+", "+(idx++)+"]");
-					try {
-						System.out.println(Arrays.toString(var.getLongData()));
-					} catch (InvalidDataStreamException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					System.out.println(Arrays.toString(var.getGenericData()));
 				}
 				
 			} else {

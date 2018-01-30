@@ -59,4 +59,7 @@ public class GInsDataMetaModel {
 		return this.header[0];
 	}
 	
+	public String toString() {
+		return getPacketHeader().toString();
+	}
 }

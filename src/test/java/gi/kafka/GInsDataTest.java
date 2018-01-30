@@ -26,32 +26,44 @@ public class GInsDataTest extends TestCase {
 	}
 
 	private MockConsumer<String, String> consumer;
-	private GInsData data;
+	private GInsData dataSet1;
+	private GInsData dataSet2;
 
 	@Before
 	public void setUp() throws IOException {
 		consumer = new MockConsumer<String, String>(OffsetResetStrategy.EARLIEST);
-		data = new GInsData("./res/test1.dat");
+		dataSet1 = new GInsData("./res/test1.dat");
+		dataSet2 = new GInsData("./res/test2_kafka_export.dat");
 	}
 
 	public static Test suite() {
 		return new TestSuite(GInsDataTest.class);
 	}
+	
+	public void testEnums() {
+		assertTrue(VariableHeader.dataTypes.length == 16);
+		assertTrue(VariableHeader.variableTypes.length == 14);
+	}
 
 	public void testMeta() {
-		final GInsDataMetaModel meta = data.getMeta();
+		final GInsDataMetaModel meta1 = dataSet1.getMeta();
+		final GInsDataMetaModel meta2 = dataSet2.getMeta();
 		
-		assertTrue(meta.getVersion().equals("1.0"));
-		assertTrue(meta.getDataCount() == 200);
-		assertTrue(meta.getOffsetNS() == 30000128L);
-		assertTrue(meta.getSampleRate() == 100.0);
-		assertTrue(meta.getVariables().size() == 2);
+		assertTrue(meta1.getVersion().equals("1.0"));
+		assertTrue(meta1.getDataCount() == 200);
+		assertTrue(meta1.getOffsetNS() == 30000128L);
+		assertTrue(meta1.getSampleRate() == 100.0);
+		assertTrue(meta1.getVariables().size() == 2);
 		
-		//System.out.println("meta: "+meta.getPacketHeader());
+		assertTrue(meta2.getVersion().equals("1.0"));
+		assertTrue(meta2.getDataCount() == 1500);
+		assertTrue(meta2.getOffsetNS() == 10000145);
+		assertTrue(meta2.getSampleRate() == 100.0);
+		assertTrue(meta2.getVariables().size() == 15);
 	}
 	
-	public void testVariables() throws InvalidDataStreamException {
-		final List<VariableHeader> vars = data.getVariables();
+	public void testVariables1() throws InvalidDataStreamException {
+		final List<VariableHeader> vars = dataSet1.getVariables();
 		for (VariableHeader var : vars) {
 			assertTrue(var.getDataType() == 14);
 			assertTrue(var.fieldLength == 8);
@@ -66,6 +78,7 @@ public class GInsDataTest extends TestCase {
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		assertTrue(Arrays.equals(data1, vars.get(0).getLongData()));
+		System.out.println("data1: "+Arrays.toString(vars.get(0).getGenericData()));
 		
 		// verify data array 2
 		final long[] data2 = new long[] { -431602080000L, -431602080000L, -431602080000L, -431602080000L, -431602080000L,
@@ -85,19 +98,26 @@ public class GInsDataTest extends TestCase {
 				-431602080000L, -431602080000L, -431602080000L, -431602080000L, -431602080000L, -431602080000L,
 				-431602080000L, -431602080000L, -431602080000L, -431602080000L, -431602080000L, -431602080000L,
 				-431602080000L, -431602080000L, -431602080000L, -431602080000L, -431602080000L };
+		System.out.println("data2: "+Arrays.toString(vars.get(1).getGenericData()));
 		assertTrue(Arrays.equals(data2, vars.get(1).getLongData()));
 	}
 	
-	public void testDataTypes() {
-		final VariableHeader var = data.getVariable(0);
+	public void testDataTypes1() throws InvalidDataStreamException {
+		final VariableHeader var = dataSet1.getVariable(0);
 		
 		// expecting long data here, check if others fail properly
+		var.getLongData();
 		
 		try {
 			var.getBooleanData();
 			fail("Expected "+InvalidDataStreamException.class+".");
 		} catch (InvalidDataStreamException e) { }
 
+		try {
+			var.getByteData();
+			fail("Expected "+InvalidDataStreamException.class+".");
+		} catch (InvalidDataStreamException e) { }
+		
 		try {
 			var.getShortData();
 			fail("Expected "+InvalidDataStreamException.class+".");
@@ -120,19 +140,102 @@ public class GInsDataTest extends TestCase {
 	}
 	
 	public void testGenericDataRetriever() {
-		final VariableHeader var = data.getVariable(0);
-		
-		// long variables work
-		final long[] ldata = var.getGenericData();
-		
-		// raw data works
-		final byte[] rdata = var.getRawData();
 
-		// int variables should throw an exception
-		try {
-			final int[] idata = var.getGenericData();
-			fail("Expected "+ClassCastException.class+".");
-		} catch (ClassCastException e) { }
+		// this can be any data type
+		final Number[] gdata1 = dataSet1.getVariable(0).getGenericData();
+		final Number[] gdata2 = dataSet1.getVariable(1).getGenericData();
+	}
+	
+	public void testRawDataRetriever() {
+
+		// raw data works
+		final byte[] rdata1 = dataSet1.getVariable(0).getRawData();
+		final byte[] rdata2 = dataSet2.getVariable(0).getRawData();
+	}
+	
+	public void testDataTypes2() throws InvalidDataStreamException {
+		final List<VariableHeader> vars = dataSet2.getVariables();
+		//System.out.println("Meta: "+dataSet2.getMeta());
+		
+		int bools = 0, floats = 0, doubles = 0, bytes = 0, shorts = 0, ints = 0, longs = 0;
+		boolean[] dataTypes = new boolean[VariableHeader.dataTypes.length];
+		
+		for (VariableHeader var : vars) {
+			dataTypes[var.getDataType()] = true;
+			
+			switch (var.getDataType()) {
+			
+				case VariableHeader.DATA_TYPE_Boolean:
+					var.getBooleanData();
+					bools++;
+					break;
+					
+				case VariableHeader.DATA_TYPE_Float:
+					var.getFloatData();
+					floats++;
+					break;
+					
+				case VariableHeader.DATA_TYPE_Double:
+					var.getDoubleData();
+					doubles++;
+					break;
+			
+				// 1 byte
+				case VariableHeader.DATA_TYPE_UnSignedInt8:
+				case VariableHeader.DATA_TYPE_SignedInt8:
+				case VariableHeader.DATA_TYPE_BitSet8:
+					var.getByteData();
+					bytes++;
+					break;
+					
+				// 2 bytes
+				case VariableHeader.DATA_TYPE_UnSignedInt16:
+				case VariableHeader.DATA_TYPE_SignedInt16:
+				case VariableHeader.DATA_TYPE_BitSet16:
+					var.getShortData();
+					shorts++;
+					break;
+					
+				// 4 bytes
+				case VariableHeader.DATA_TYPE_UnSignedInt32:
+				case VariableHeader.DATA_TYPE_SignedInt32:
+				case VariableHeader.DATA_TYPE_BitSet32:
+					var.getIntData();
+					ints++;
+					break;
+					
+				// 8 bytes
+				case VariableHeader.DATA_TYPE_UnSignedInt64:
+				case VariableHeader.DATA_TYPE_SignedInt64:
+				case VariableHeader.DATA_TYPE_BitSet64:
+					var.getLongData();
+					longs++;
+					break;
+					
+				// type not found or unknown, return raw
+				default:
+					var.getRawData();
+					break;
+			}
+			
+			//System.out.println("Header: "+var.toString());
+			System.out.println(String.format("%-35s= %s" , "[dataT:"+var.getDataType()+", varT:"+var.getVariableType()+", "+var.getName()+"", Arrays.toString(Arrays.copyOf(var.getGenericData(), 10))));
+		}
+		
+		// test if all data types occur at least once
+		// (should work if the above test works too)
+		// this just checks that no dataType exists twice
+		for (boolean b : dataTypes)
+			assertTrue(b);
+		
+		// check if the amounts are correct
+		assertTrue(bools == 1);
+		assertTrue(floats == 1);
+		assertTrue(doubles == 1);
+		assertTrue(bytes == 3);
+		assertTrue(shorts == 3);
+		assertTrue(ints == 3);
+		assertTrue(longs == 3);
 	}
 	
 	// TODO

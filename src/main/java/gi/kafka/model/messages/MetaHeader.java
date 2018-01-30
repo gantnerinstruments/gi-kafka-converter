@@ -140,8 +140,10 @@ public class MetaHeader {
 
 	@Override
 	public String toString() {
+		//return "TKafkaPacketHeader [version=" + version + ", dataCount=" + dataCount + ", offsetNS=" + offsetNS
+		//		+ ", sampleRate=" + sampleRate + ", variables=" + variables + "]";
 		return "TKafkaPacketHeader [version=" + version + ", dataCount=" + dataCount + ", offsetNS=" + offsetNS
-				+ ", sampleRate=" + sampleRate + ", variables=" + variables + "]";
+				+ ", sampleRate=" + sampleRate + "]";
 	}
 
 }

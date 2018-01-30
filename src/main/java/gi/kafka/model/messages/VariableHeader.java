@@ -1,6 +1,7 @@
 package gi.kafka.model.messages;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Iterator;
 
 import org.msgpack.core.MessageUnpacker;
@@ -13,24 +14,24 @@ import gi.kafka.model.InvalidDataStreamException;
 
 public class VariableHeader {
 
-	private static final int TYPE_No = 0;
-	private static final int TYPE_Boolean = 1;
-	private static final int TYPE_SignedInt8 = 2;
-	private static final int TYPE_UnSignedInt8 = 3;
-	private static final int TYPE_SignedInt16 = 4;
-	private static final int TYPE_UnSignedInt16 = 5;
-	private static final int TYPE_SignedInt32 = 6;
-	private static final int TYPE_UnSignedInt32 = 7;
-	private static final int TYPE_Float = 8;
-	private static final int TYPE_BitSet8 = 9;
-	private static final int TYPE_BitSet16 = 10;
-	private static final int TYPE_BitSet32 = 11;
-	private static final int TYPE_Double = 12;
-	private static final int TYPE_SignedInt64 = 13;
-	private static final int TYPE_UnSignedInt64 = 14;
-	private static final int TYPE_BitSet64 = 15;
-	
-	private static final String[] types = {
+	// dataType
+	public static final int DATA_TYPE_No = 0;
+	public static final int DATA_TYPE_Boolean = 1;
+	public static final int DATA_TYPE_SignedInt8 = 2;
+	public static final int DATA_TYPE_UnSignedInt8 = 3;
+	public static final int DATA_TYPE_SignedInt16 = 4;
+	public static final int DATA_TYPE_UnSignedInt16 = 5;
+	public static final int DATA_TYPE_SignedInt32 = 6;
+	public static final int DATA_TYPE_UnSignedInt32 = 7;
+	public static final int DATA_TYPE_Float = 8;
+	public static final int DATA_TYPE_BitSet8 = 9;
+	public static final int DATA_TYPE_BitSet16 = 10;
+	public static final int DATA_TYPE_BitSet32 = 11;
+	public static final int DATA_TYPE_Double = 12;
+	public static final int DATA_TYPE_SignedInt64 = 13;
+	public static final int DATA_TYPE_UnSignedInt64 = 14;
+	public static final int DATA_TYPE_BitSet64 = 15;
+	public static final String[] dataTypes = {
 		"none",
 		"boolean",
 		"signed int 8",
@@ -48,6 +49,38 @@ public class VariableHeader {
 		"unsigned int 64",
 		"bitset 64"
 	};
+	
+	// variableType
+	public static final int VARIABLE_TYPE_Empty = 0;
+	public static final int VARIABLE_TYPE_AnalogInput = 1;
+	public static final int VARIABLE_TYPE_Arithmetic = 2;
+	public static final int VARIABLE_TYPE_DigitalOutput = 3;
+	public static final int VARIABLE_TYPE_DigitalInput = 4;
+	public static final int VARIABLE_TYPE_SetPoint = 5;
+	public static final int VARIABLE_TYPE_Alarm = 6;
+	public static final int VARIABLE_TYPE_BitsetOutput = 7;
+	public static final int VARIABLE_TYPE_BitsetInput = 8;
+	public static final int VARIABLE_TYPE_PIDController = 9;
+	public static final int VARIABLE_TYPE_AnalogOutput = 10;
+	public static final int VARIABLE_TYPE_SignalConditioning = 11;
+	public static final int VARIABLE_TYPE_RemoteInput = 12;
+	public static final int VARIABLE_TYPE_Reference = 13;
+	public static final String[] variableTypes = {
+			"empty",
+			"analog input",
+			"arithmetic",
+			"digital output",
+			"digital input",
+			"set point",
+			"alarm",
+			"bitset output",
+			"bitset input",
+			"pid controller",
+			"analog output",
+			"signal conditioning",
+			"remote input",
+			"reference",
+		};
 	
 	
 	public static VariableHeader[] unpack(GInsData data, MessageUnpacker unpacker) throws IOException {
@@ -85,8 +118,8 @@ public class VariableHeader {
 
 	
 	public boolean[] getBooleanData() throws InvalidDataStreamException {
-		if (this.getDataType() != TYPE_Boolean)
-			throw new InvalidDataStreamException("Trying to read boolean data from "+types[this.getDataType()]+".");
+		if (this.getDataType() != DATA_TYPE_Boolean)
+			throw new InvalidDataStreamException("Trying to read boolean data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataBoolean(this.variableIndex);
 	}
 	
@@ -95,90 +128,128 @@ public class VariableHeader {
 	}
 	
 	public byte[] getByteData() throws InvalidDataStreamException {
-		if (this.getDataType() != TYPE_UnSignedInt8 && this.getDataType() != TYPE_SignedInt8 && this.getDataType() != TYPE_BitSet8)
-			throw new InvalidDataStreamException("Trying to read byte data from "+types[this.getDataType()]+".");
+		if (this.getDataType() != DATA_TYPE_UnSignedInt8 && this.getDataType() != DATA_TYPE_SignedInt8 && this.getDataType() != DATA_TYPE_BitSet8)
+			throw new InvalidDataStreamException("Trying to read byte data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataByte(this.variableIndex);
 	}
 
 	public short[] getShortData() throws InvalidDataStreamException {
-		if (this.getDataType() != TYPE_UnSignedInt16 && this.getDataType() != TYPE_SignedInt16 && this.getDataType() != TYPE_BitSet16)
-			throw new InvalidDataStreamException("Trying to read short data from "+types[this.getDataType()]+".");
+		if (this.getDataType() != DATA_TYPE_UnSignedInt16 && this.getDataType() != DATA_TYPE_SignedInt16 && this.getDataType() != DATA_TYPE_BitSet16)
+			throw new InvalidDataStreamException("Trying to read short data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataShort(this.variableIndex);
 	}
 	
 	public float[] getFloatData() throws InvalidDataStreamException {
-		if (this.getDataType() != TYPE_Float)
-			throw new InvalidDataStreamException("Trying to read float data from "+types[this.getDataType()]+".");
+		if (this.getDataType() != DATA_TYPE_Float)
+			throw new InvalidDataStreamException("Trying to read float data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataFloat(this.variableIndex);
 	}
 	
 	public int[] getIntData() throws InvalidDataStreamException {
-		if (this.getDataType() != TYPE_UnSignedInt32 && this.getDataType() != TYPE_SignedInt32 && this.getDataType() != TYPE_BitSet32)
-			throw new InvalidDataStreamException("Trying to read int data from "+types[this.getDataType()]+".");
+		if (this.getDataType() != DATA_TYPE_UnSignedInt32 && this.getDataType() != DATA_TYPE_SignedInt32 && this.getDataType() != DATA_TYPE_BitSet32)
+			throw new InvalidDataStreamException("Trying to read int data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataInt(this.variableIndex);
 	}
 	
 	public double[] getDoubleData() throws InvalidDataStreamException {
-		if (this.getDataType() != TYPE_Double)
-			throw new InvalidDataStreamException("Trying to read double data from "+types[this.getDataType()]+".");
+		if (this.getDataType() != DATA_TYPE_Double)
+			throw new InvalidDataStreamException("Trying to read double data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataDouble(this.variableIndex);
 	}
 	
 	public long[] getLongData() throws InvalidDataStreamException {
-		if (this.getDataType() != TYPE_UnSignedInt64 && this.getDataType() != TYPE_SignedInt64 && this.getDataType() != TYPE_BitSet64)
-			throw new InvalidDataStreamException("Trying to read boolean data from "+types[this.getDataType()]+".");
+		if (this.getDataType() != DATA_TYPE_UnSignedInt64 && this.getDataType() != DATA_TYPE_SignedInt64 && this.getDataType() != DATA_TYPE_BitSet64)
+			throw new InvalidDataStreamException("Trying to read long data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataLong(this.variableIndex);
 	}
 	
 	/**
-	 * Use generic way to obtain data array. Automatically returns boolean, byte,
-	 * short, integer, long, double or float array. Whichever is needed according to
-	 * the variable's dataType.
+	 * Use some-what generic way of requesting data. It's not recommended to use that during production,
+	 * because all values are copied into a Number array, which is then returned. However it's great
+	 * for testing purposes, because you can get every data array by using 1 method.
 	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getGenericData() {
+	public Number[] getGenericData() {
 		final GInsDataKafkaConverter conv = this.data.getConverter();
-		switch (variableType) {
+		final Number[] res;
 		
-			case TYPE_Boolean:
-				return (T)(boolean[])conv.getVariableDataBoolean(this.variableIndex);
+		//System.out.println("type: "+dataType);
+		switch (this.dataType) {
+		
+			case DATA_TYPE_Boolean:
+				final boolean[] booldata = conv.getVariableDataBoolean(this.variableIndex);
+				res = new Number[booldata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = booldata[i] ? 1 : 0;
+				break;
+				//return (T) (boolean[])conv.getVariableDataBoolean(this.variableIndex);
 				
-			case TYPE_Float:
-				return (T)(float[])conv.getVariableDataFloat(this.variableIndex);
+			case DATA_TYPE_Float:
+				final float[] fdata = conv.getVariableDataFloat(this.variableIndex);
+				res = new Number[fdata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = fdata[i];
+				break;
 				
-			case TYPE_Double:
-				return (T)(double[])conv.getVariableDataDouble(this.variableIndex);
+			case DATA_TYPE_Double:
+				final double[] ddata = conv.getVariableDataDouble(this.variableIndex);
+				res = new Number[ddata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = ddata[i];
+				break;
 		
 			// 1 byte
-			case TYPE_UnSignedInt8:
-			case TYPE_SignedInt8:
-			case TYPE_BitSet8:
-				return (T)(byte[])conv.getVariableDataByte(this.variableIndex);
+			case DATA_TYPE_UnSignedInt8:
+			case DATA_TYPE_SignedInt8:
+			case DATA_TYPE_BitSet8:
+				final byte[] bdata = conv.getVariableDataByte(this.variableIndex);
+				res = new Number[bdata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = bdata[i];
+				break;
 				
 			// 2 bytes
-			case TYPE_UnSignedInt16:
-			case TYPE_SignedInt16:
-			case TYPE_BitSet16:
-				return (T) (short[]) conv.getVariableDataShort(this.variableIndex);
+			case DATA_TYPE_UnSignedInt16:
+			case DATA_TYPE_SignedInt16:
+			case DATA_TYPE_BitSet16:
+				final short[] sdata = conv.getVariableDataShort(this.variableIndex);
+				res = new Number[sdata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = sdata[i];
+				break;
 				
 			// 4 bytes
-			case TYPE_UnSignedInt32:
-			case TYPE_SignedInt32:
-			case TYPE_BitSet32:
-				return (T) (int[]) conv.getVariableDataInt(this.variableIndex);
+			case DATA_TYPE_UnSignedInt32:
+			case DATA_TYPE_SignedInt32:
+			case DATA_TYPE_BitSet32:
+				final int[] idata = conv.getVariableDataInt(this.variableIndex);
+				res = new Number[idata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = idata[i];
+				break;
 				
 			// 8 bytes
-			case TYPE_UnSignedInt64:
-			case TYPE_SignedInt64:
-			case TYPE_BitSet64:
-				return (T) (long[]) conv.getVariableDataLong(this.variableIndex);
+			case DATA_TYPE_UnSignedInt64:
+			case DATA_TYPE_SignedInt64:
+			case DATA_TYPE_BitSet64:
+				final long[] ldata = conv.getVariableDataLong(this.variableIndex);
+				res = new Number[ldata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = ldata[i];
+				break;
 				
 			// type not found or unknown, return raw
 			default:
-				return (T)(byte[])conv.getVariableDataRaw(this.variableIndex);
+				final byte[] rdata = conv.getVariableDataRaw(this.variableIndex);
+				res = new Number[rdata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = rdata[i];
+				break;
 		}
+		
+		return res;
 	}
 	
 
