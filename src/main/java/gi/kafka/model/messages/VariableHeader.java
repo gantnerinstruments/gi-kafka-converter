@@ -14,6 +14,34 @@ import gi.kafka.model.InvalidDataStreamException;
 
 public class VariableHeader {
 
+	/*public enum DataType {
+		No (0),
+		Boolean (1),
+		SignedInt8 (2),
+		UnSignedInt8 (3),
+		SignedInt16 (4),
+		UnSignedInt16 (5),
+		SignedInt32 (6),
+		UnSignedInt32 (7),
+		Float (8),
+		BitSet8 (9),
+		BitSet16 (10),
+		BitSet32 (11),
+		Double (12),
+		SignedInt64 (13),
+		UnSignedInt64 (14),
+		BitSet64 (15);
+		
+		private int type;
+		DataType(int type) {
+			this.type = type;
+		}
+		
+		public int type() {
+			return this.type;
+		}
+	}*/
+	
 	// dataType
 	public static final int DATA_TYPE_No = 0;
 	public static final int DATA_TYPE_Boolean = 1;
@@ -66,21 +94,21 @@ public class VariableHeader {
 	public static final int VARIABLE_TYPE_RemoteInput = 12;
 	public static final int VARIABLE_TYPE_Reference = 13;
 	public static final String[] variableTypes = {
-			"empty",
-			"analog input",
-			"arithmetic",
-			"digital output",
-			"digital input",
-			"set point",
-			"alarm",
-			"bitset output",
-			"bitset input",
-			"pid controller",
-			"analog output",
-			"signal conditioning",
-			"remote input",
-			"reference",
-		};
+		"empty",
+		"analog input",
+		"arithmetic",
+		"digital output",
+		"digital input",
+		"set point",
+		"alarm",
+		"bitset output",
+		"bitset input",
+		"pid controller",
+		"analog output",
+		"signal conditioning",
+		"remote input",
+		"reference",
+	};
 	
 	
 	public static VariableHeader[] unpack(GInsData data, MessageUnpacker unpacker) throws IOException {
@@ -170,7 +198,6 @@ public class VariableHeader {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public Number[] getGenericData() {
 		final GInsDataKafkaConverter conv = this.data.getConverter();
 		final Number[] res;
