@@ -6,10 +6,6 @@ import java.util.List;
 
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
-import org.junit.Before;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import gi.kafka.model.GInsData;
 import gi.kafka.model.GInsDataMetaModel;
@@ -21,16 +17,12 @@ import junit.framework.TestSuite;
 
 public class GInsDataTest extends TestCase {
 
-	public GInsDataTest(String testName) {
+	private final MockConsumer<String, String> consumer;
+	private final GInsData dataSet1;
+	private final GInsData dataSet2;
+
+	public GInsDataTest(String testName) throws IOException {
 		super(testName);
-	}
-
-	private MockConsumer<String, String> consumer;
-	private GInsData dataSet1;
-	private GInsData dataSet2;
-
-	@Before
-	public void setUp() throws IOException {
 		consumer = new MockConsumer<String, String>(OffsetResetStrategy.EARLIEST);
 		dataSet1 = new GInsData("./res/test1.dat");
 		dataSet2 = new GInsData("./res/test2_kafka_export.dat");

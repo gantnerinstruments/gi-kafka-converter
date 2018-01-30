@@ -33,6 +33,10 @@ public class GInsData {
 		//this.converter.free();
 	}
 	
+	public void free() {
+		this.converter.free();
+	}
+	
 	public GInsDataKafkaConverter getConverter() {
 		return this.converter;
 	}

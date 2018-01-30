@@ -26,6 +26,9 @@ public class Main {
 					System.out.println(Arrays.toString(var.getGenericData()));
 				}
 				
+				// c++ lib requires resourced to be freed
+				data.free();
+				
 			} else {
 				System.out.println("No input file specified!");
 			}
