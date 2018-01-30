@@ -30,7 +30,7 @@ public class GInsData {
 	private void load() throws IOException {
 		this.converter = new GInsDataKafkaConverter(data);
 		this.metaModel = new GInsDataMetaModel(this);
-		this.converter.free();
+		//this.converter.free();
 	}
 	
 	public GInsDataKafkaConverter getConverter() {
