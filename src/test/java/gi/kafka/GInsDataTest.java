@@ -175,7 +175,7 @@ public class GInsDataTest extends TestCase {
 		final List<VariableHeader> vars = dataSet2.getVariables();
 		//System.out.println("Meta: "+dataSet2.getMeta());
 		
-		int bools = 0, floats = 0, doubles = 0, bytes = 0, shorts = 0, ints = 0, longs = 0;
+		int bools = 0, floats = 0, doubles = 0, bytes = 0, shorts = 0, ints = 0, longs = 0, chars = 0;
 		boolean[] dataTypes = new boolean[VariableHeader.dataTypes.length];
 		
 		for (VariableHeader var : vars) {
@@ -199,15 +199,20 @@ public class GInsDataTest extends TestCase {
 					break;
 			
 				// 1 byte
-				case VariableHeader.DATA_TYPE_UnSignedInt8:
+				case VariableHeader.DATA_TYPE_UnSignedInt8:	//?
 				case VariableHeader.DATA_TYPE_SignedInt8:
 				case VariableHeader.DATA_TYPE_BitSet8:
 					var.getByteData();
 					bytes++;
 					break;
-					
+				
 				// 2 bytes
 				case VariableHeader.DATA_TYPE_UnSignedInt16:
+					var.getCharData();
+					chars++;
+					break;	
+					
+				// 2 bytes				
 				case VariableHeader.DATA_TYPE_SignedInt16:
 				case VariableHeader.DATA_TYPE_BitSet16:
 					var.getShortData();
@@ -252,7 +257,8 @@ public class GInsDataTest extends TestCase {
 		assertTrue(floats == 1);
 		assertTrue(doubles == 1);
 		assertTrue(bytes == 3);
-		assertTrue(shorts == 3);
+		assertTrue(shorts == 2);
+		assertTrue(chars == 1);
 		assertTrue(ints == 3);
 		assertTrue(longs == 3);
 	}
