@@ -164,7 +164,11 @@ public class GInsDataTest extends TestCase {
 
 		// raw data works
 		final byte[] rdata1 = dataSet1.getVariable(0).getRawData();
+		System.out.println("raw1: "+Arrays.toString(rdata1));
+		
 		final byte[] rdata2 = dataSet2.getVariable(0).getRawData();
+		System.out.println("raw2: "+Arrays.toString(rdata2));
+		
 	}
 	
 	public void testDataTypes2() throws InvalidDataStreamException {
