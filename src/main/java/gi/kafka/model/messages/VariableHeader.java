@@ -162,9 +162,15 @@ public class VariableHeader {
 	}
 
 	public short[] getShortData() throws InvalidDataStreamException {
-		if (this.getDataType() != DATA_TYPE_UnSignedInt16 && this.getDataType() != DATA_TYPE_SignedInt16 && this.getDataType() != DATA_TYPE_BitSet16)
+		if (this.getDataType() != DATA_TYPE_SignedInt16 && this.getDataType() != DATA_TYPE_BitSet16)
 			throw new InvalidDataStreamException("Trying to read short data from "+dataTypes[this.getDataType()]+".");
 		return this.data.getConverter().getVariableDataShort(this.variableIndex);
+	}
+	
+	public char[] getCharData() throws InvalidDataStreamException {
+		if (this.getDataType() != DATA_TYPE_UnSignedInt16)
+			throw new InvalidDataStreamException("Trying to read char data from "+dataTypes[this.getDataType()]+".");
+		return this.data.getConverter().getVariableDataChar(this.variableIndex);
 	}
 	
 	public float[] getFloatData() throws InvalidDataStreamException {
@@ -236,9 +242,16 @@ public class VariableHeader {
 				for (int i = 0; i < res.length; i++)
 					res[i] = bdata[i];
 				break;
+
+			// 2 bytes
+			case DATA_TYPE_UnSignedInt16:			
+				final char[] cdata = conv.getVariableDataChar(this.variableIndex);
+				res = new Number[cdata.length];
+				for (int i = 0; i < res.length; i++)
+					res[i] = (int)cdata[i];
+				break;
 				
 			// 2 bytes
-			case DATA_TYPE_UnSignedInt16:
 			case DATA_TYPE_SignedInt16:
 			case DATA_TYPE_BitSet16:
 				final short[] sdata = conv.getVariableDataShort(this.variableIndex);
