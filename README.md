@@ -33,7 +33,7 @@ struct TKafkaVariableHeader
 {
 	int DataDirection;	//see below
 	int DataType;		//see below
-	int FieldLength;	//
+	int FieldLength;	
 	std::string ID;
 	std::string Name;
 	int Precision;		//Value = Raw/pow(10.0, Precision)
