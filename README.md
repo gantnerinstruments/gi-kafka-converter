@@ -6,7 +6,7 @@
 |-|-|
 | 1 | Version |
 | 2 | Total length of data |
-| 2 | Length to MsgPack data |
+| 2 | Length of MsgPack data |
 | n | MsgPack data |
 | n | Data |
 
@@ -31,14 +31,14 @@ Timstamps of next values: ``tn = t0 + i * 1E9/SampleRate``, where ``i`` is the i
 ```c++
 struct TKafkaVariableHeader
 {
-	int DataDirection;
-	int DataType;
-	int FieldLength;
+	int DataDirection;	//see below
+	int DataType;		//see below
+	int FieldLength;	//
 	std::string ID;
 	std::string Name;
-	int Precision;
+	int Precision;		//Value = Raw/pow(10.0, Precision)
 	std::string Unit;
-	int VariableType;
+	int VariableType;	//see below
 
 	MSGPACK_DEFINE(DataDirection, DataType, FieldLength, ID, Name, Precision, Unit, VariableType);
 };
