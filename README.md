@@ -1,5 +1,7 @@
 # gi-kafka-converter
 
+For testing purposes, the file ``gi-kafka-converter/res/test2_kafka_export.dat`` can be used.
+
 ## Kafka Entry Structure
 
 | Bytes | Description |
