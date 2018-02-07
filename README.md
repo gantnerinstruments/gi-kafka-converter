@@ -1,7 +1,25 @@
 # gi-kafka-converter
 
-## Data Structure
+## Kafka Entry Structure
 
+| Bytes | Description |
+|-|-|
+| 1 | Version |
+| 2 | Total length of data |
+| 2 | Length to MsgPack data |
+| n | MsgPack data |
+| n | Data |
+
+#### Data Structure
+Measured values are appended as binary data variable by variable.
+
+| V_0 Data | V_1 Data | ... | V_n Data |
+|-|-|-|-|
+
+Each entry (e.g. V_0 Data) contains all measured data from this variable for all timestamps.
+
+| V_0_t0 | V_0_t1 | ... | V_0_tn | V_1_t0 | V_1_t1 | ... |
+|-|-|-|-|-|-|-|
 
 ## MsgPack Header
 ```c++
