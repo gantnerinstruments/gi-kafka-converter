@@ -16,10 +16,16 @@ Measured values are appended as binary data variable by variable.
 | V_0 Data | V_1 Data | ... | V_n Data |
 |-|-|-|-|
 
+The length of one variable block is calculated by ``DataCount / Variables.Length x LengthOf(DataType) `` (see MsgPack header).
+
 Each entry (e.g. V_0 Data) contains all measured data from this variable for all timestamps.
 
 | V_0_t0 | V_0_t1 | ... | V_0_tn | V_1_t0 | V_1_t1 | ... |
 |-|-|-|-|-|-|-|
+
+Timstamp of first value: ``t0 = Kafka_Timstamp * 1E6 + Offset_ns``
+
+Timstamps of next values: ``tn = t0 + i * 1E9/SampleRate``, where ``i`` is the index of processed entry.
 
 ## MsgPack Header
 ```c++
