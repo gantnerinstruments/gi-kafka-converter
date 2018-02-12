@@ -32,4 +32,4 @@ services:
       - zookeeper
       - kafka
     environment:
-      ZOOKEEPER_HOST: kafka:9093
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
